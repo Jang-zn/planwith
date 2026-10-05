@@ -7,6 +7,7 @@ just this run's three topics. Include round number, previous report link, and a 
 of changed decisions, reasons and newly available evidence. Carry-forward conclusions must be
 labeled with their source round; do not imply that unchanged old scores were re-evaluated. Reconcile discussion index, topic directories, state and decisions.
 If a record is missing or contradictory, show that limitation instead of inferring a conclusion.
+Read source Markdown and state from the current round's `records/` (legacy rounds retain their old paths).
 Markdown remains the source of record; HTML is a readable derived report, never a second decision store.
 
 ## Editorial passes (required)
@@ -66,5 +67,7 @@ that breaks when the report is opened via file://. Never insert raw untrusted te
   labels, table readability, keyboard controls and print layout. Repair before delivery. If visual
   tools are unavailable, disclose that visual QA is unverified instead of claiming success.
 - Open the HTML in the host preview/browser when supported, otherwise provide its absolute file
-  link and tell the user it can be opened directly in a browser. Link it from the output README.
+  link and tell the user it can be opened directly in a browser. Link it from `records/README.md` using `../conclusion-report.html`. Present the HTML as the
+  default deliverable; it must be understandable without opening any MD. Links from the report
+  to detailed evidence use `records/...` and are secondary.
 - A later decision or user answer requires refreshing this same report, including its timestamp.

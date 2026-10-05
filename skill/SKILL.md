@@ -29,13 +29,13 @@ The user should not need to run bridge commands manually.
    directory as the project directory. Pass the captured directory as `--project` to the bridge
    and the resolved output location to every participant. Both hosts follow this same rule;
    different launch folders intentionally have different docs folders.
-   Read existing brief, decisions and discussion index in the output directory first. Record the
+   Read existing brief, decisions and discussion index in the current round's `records/` first. Record the
    relative output path in the brief for cross-computer handoff; resolve absolute paths locally.
    The bridge requires topics inside `--project`. For an explicitly requested external location,
    explain this limitation and ask for an in-project destination; never silently redirect.
 2. Extract goals, constraints and evidence from the current conversation. Ask only material
    missing questions. Do not silently assume personal use versus a public commercial product.
-3. Create/update `README.md`, `00-brief.md`, `decisions.md`, `open-questions.md`, `sources.md`.
+3. Inside the current round's `records/`, create/update `README.md`, `00-brief.md`, `decisions.md`, `open-questions.md`, `sources.md`.
    Create substantive target/problem, product, business/operations, UX/design, technical design,
    and validation/roadmap documents as relevant; label draft, needs-validation or user-approved.
    Never invent research or generate empty exhaustive plans to fill a template.
@@ -49,13 +49,17 @@ The user should not need to run bridge commands manually.
 Read [rounds.md](references/rounds.md). A planning round is an iteration of the IDEA and its
 complete deliverables, not one rebuttal exchange and not one user message. Use bundled
 `scripts/rounds.py` to allocate/resume/close it; never reset prior topic state to make a new round.
-All document paths below are relative to the CURRENT round directory. Keep older rounds unchanged.
+All Markdown planning documents, discussion transcripts and JSON state belong in the CURRENT
+round's `records/` directory. The round root exposes `conclusion-report.html` as the primary
+reader deliverable (plus optional report assets). Keep older rounds unchanged. Present/open the
+HTML by default; only show record links when the user requests details. README links from records
+back to the report must use `../conclusion-report.html`.
 
 ## Bridge usage
 
 ```text
-python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/round-001/discussions/001-target init --title "Initial target"
-python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/round-001/discussions/001-target call --provider codex --phase proposal --prompt-file <absolute-prompt-file>
+python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/round-001/records/discussions/001-target init --title "Initial target"
+python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/round-001/records/discussions/001-target call --provider codex --phase proposal --prompt-file <absolute-prompt-file>
 ```
 
 Use `claude` when coordinating from Codex; `codex` when coordinating from Claude.

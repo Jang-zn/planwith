@@ -17,7 +17,7 @@ python3 <skill>/scripts/rounds.py --project <host-cwd> new --reason "User feedba
 Optional `--output <relative-base>` honors the user's destination. Helper returns the current
 absolute round path. Use its project-relative topic path for peer.py. The helper only manages
 round metadata and `planwith-rounds.md`; the coordinator writes substantive documents.
-Run `status` after creating report/README so index links refresh. Resolve paths locally on each PC.
+Run `status` after creating the report so index links refresh. Resolve paths locally on each PC.
 
 - First request: clarify idea and constraints, create round-001, run bounded topic workflow.
 - User answers a pending question, asks for clarification or resumes unfinished work: SAME round.
@@ -41,3 +41,12 @@ additional active round; do not bypass this with manual mkdir. Existing unversio
 references: leave them intact and link from the first round; no automatic destructive migration.
 User-authorized historical corrections must leave an explicit correction note. No automatic Git
 commit or push is implied by a planning round.
+
+## Reader report versus working records
+
+Each new round stores only the reader-facing `conclusion-report.html` (and optional visual assets)
+at its root. All planning MD, changes.md, topic transcripts, state.json and round.json are under
+`records/`. Example peer path: `docs/round-002/records/discussions/001-target`.
+The round helper creates `records/round.json` and links only reports from the round index.
+It can resume legacy root-level round.json without moving it. For legacy rounds, preserve their
+existing paths; apply the new layout to new rounds. Do not automatically relocate earlier artifacts.

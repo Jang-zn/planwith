@@ -60,18 +60,20 @@ CLI에서 작업 폴더를 명시적으로 선택했다면 그 폴더를 사용�
 
 ```text
 your-project/docs/round-001/
-├── README.md
-├── conclusion-report.html  # 모든 안건의 결론을 모은 시각 보고서
-├── 00-brief.md
-├── decisions.md
-├── open-questions.md
-├── sources.md
-├── ... 타겟·제품·운영·디자인·설계·검증 문서
-└── discussions/
+├── conclusion-report.html  # 사용자가 읽는 결론 보고서
+└── records/                # 에이전트 재검토·이어가기용 기록
+    ├── round.json
     ├── README.md
-    └── 001-target/
-        ├── discussion.md   # 평가표 + 안건별 전체 논의 + 사용자 답변
-        └── state.json      # 재개 가능한 예산·단계 상태
+    ├── 00-brief.md
+    ├── decisions.md
+    ├── open-questions.md
+    ├── sources.md
+    ├── ... 타겟·제품·운영·디자인·설계·검증 문서
+    └── discussions/
+        ├── README.md
+        └── 001-target/
+            ├── discussion.md
+            └── state.json
 ```
 
 같은 안건 안에서 두 모델의 발언을 함께 관리합니다. 다른 PC에서도 프로젝트를 커밋·푸시한 뒤
@@ -153,17 +155,16 @@ Python 표준 라이브러리만 사용합니다. 테스트는 실제 모델을 
 ```text
 docs/
 ├── planwith-rounds.md
-├── round-001/  # 첫 기획 결과 보존
-│   ├── round.json
-│   ├── README.md
+├── round-001/
 │   ├── conclusion-report.html
-│   └── discussions/
-└── round-002/  # 이전 결론과 새 피드백으로 재기획
-    ├── round.json
-    ├── 00-brief.md
-    ├── changes.md
+│   └── records/  # 이전 기획·토론·상태 보존
+└── round-002/
     ├── conclusion-report.html
-    └── discussions/
+    └── records/
+        ├── round.json
+        ├── 00-brief.md
+        ├── changes.md
+        └── discussions/
 ```
 
 안건 내부의 공방 1·2차와 기획 라운드는 별개입니다. 확인 질문에 답하거나 중단된 작업을
@@ -176,3 +177,7 @@ docs/
 덮어쓰지 않습니다. 기본값은 운영체제 쓰기 잠금이 아닌 스킬의 보존 규칙이며, 사용자의 명시적
 과거 문서 수정 요청이 있으면 변경 이력을 남깁니다. 기존 `docs/` 직하의 문서는 자동 이동하지
 않고 첫 라운드의 참고 자료로 연결합니다.
+
+사용자에게는 HTML 보고서를 기본으로 제시하며, 안건별 MD를 읽지 않아도 결론과 근거를
+이해할 수 있게 작성합니다. 상세 MD와 실행 상태는 `records/`에 보존하여 다음 라운드의
+재검토에 사용합니다. 이전 버전의 라운드 폴더는 자동 이동하지 않고 기존 경로로 읽습니다.
