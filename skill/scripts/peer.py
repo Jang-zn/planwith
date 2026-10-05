@@ -143,12 +143,12 @@ def main():
             env = os.environ.copy()
             env['PLANWITH_PARTICIPANT'] = '1'
             if args.provider == 'codex':
-                auth = subprocess.run([executable, 'login', 'status'], capture_output=True, text=True, timeout=15)
+                auth = subprocess.run([executable, 'login', 'status'], capture_output=True, text=True, encoding="utf-8", timeout=15)
                 if auth.returncode or 'ChatGPT' not in auth.stdout + auth.stderr:
                     raise ValueError('Sign in using codex login with ChatGPT first.')
                 cmd = [executable, 'exec', '--ignore-user-config', '--skip-git-repo-check', '--ephemeral', '-s', 'read-only', '-c', 'approval_policy="never"', '-']
             else:
-                auth = subprocess.run([executable, 'auth', 'status'], capture_output=True, text=True, timeout=15)
+                auth = subprocess.run([executable, 'auth', 'status'], capture_output=True, text=True, encoding="utf-8", timeout=15)
                 info = json.loads(auth.stdout) if auth.returncode == 0 else {}
                 if info.get('authMethod') != 'claude.ai' or not info.get('loggedIn'):
                     raise ValueError('Sign in to Claude Code with your subscription first.')
@@ -184,6 +184,9 @@ def main():
 
 
 if __name__ == '__main__':
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
     try:
         main()
     except (ValueError, OSError, subprocess.TimeoutExpired) as exc:

@@ -23,11 +23,11 @@ class InstallTests(unittest.TestCase):
             rule.write_text('User rules\n', encoding='utf-8')
             installer.install(home)
             installer.install(home)
-            self.assertEqual(rule.read_text().count(installer.START), 1)
-            self.assertIn('User rules', rule.read_text())
+            self.assertEqual(rule.read_text(encoding="utf-8").count(installer.START), 1)
+            self.assertIn('User rules', rule.read_text(encoding="utf-8"))
             installer.install(home, remove=True)
-            self.assertIn('User rules', rule.read_text())
-            self.assertNotIn(installer.START, rule.read_text())
+            self.assertIn('User rules', rule.read_text(encoding="utf-8"))
+            self.assertNotIn(installer.START, rule.read_text(encoding="utf-8"))
             self.assertFalse((home / '.claude/skills/planwith').exists())
 
     def test_unmanaged_skill_not_overwritten(self):
@@ -64,7 +64,7 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(self.cli('answer', '--file', str(answer)).returncode, 0)
         state = json.loads(self.cli('status').stdout)
         self.assertEqual(state['status'], 'active')
-        self.assertIn('Small businesses', (self.root / 'docs/test/001/discussion.md').read_text())
+        self.assertIn('Small businesses', (self.root / 'docs/test/001/discussion.md').read_text(encoding="utf-8"))
         self.assertEqual(self.cli('finish', '--reason', 'Needs validation').returncode, 0)
         self.assertNotEqual(self.cli('answer', '--file', str(answer)).returncode, 0)
 
@@ -76,7 +76,7 @@ class BridgeTests(unittest.TestCase):
     def test_budget_and_phase_limits(self):
         self.cli('init', '--title', 'Limits')
         path = self.root / 'docs/test/001/state.json'
-        state = json.loads(path.read_text())
+        state = json.loads(path.read_text(encoding="utf-8"))
         state['calls'] = [{'phase': 'proposal'}] * 8
         path.write_text(json.dumps(state))
         result = self.cli('call', '--provider', 'codex', '--phase', 'judge', '--prompt-file', 'missing')
@@ -114,7 +114,7 @@ class ProcessTests(unittest.TestCase):
             auth = subprocess.CompletedProcess([], 0, '{"authMethod":"claude.ai","loggedIn":true}', '')
             with patch.object(sys, 'argv', base + ['call', '--provider', 'claude', '--phase', 'proposal', '--prompt-file', str(prompt)]), patch.object(peer.shutil, 'which', return_value='claude'), patch.object(peer.subprocess, 'run', return_value=auth), patch.object(peer, 'run', return_value='Claim A-01: needs customer evidence.'):
                 peer.main()
-            state = json.loads((root / 'docs/test/state.json').read_text())
+            state = json.loads((root / 'docs/test/state.json').read_text(encoding="utf-8"))
             self.assertEqual(len(state['calls']), 1)
             self.assertEqual(state['calls'][0]['status'], 'completed')
-            self.assertIn('Claim A-01', (root / 'docs/test/discussion.md').read_text())
+            self.assertIn('Claim A-01', (root / 'docs/test/discussion.md').read_text(encoding="utf-8"))

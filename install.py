@@ -58,6 +58,9 @@ def install(home=None, remove=False):
 
 
 if __name__ == '__main__':
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser()
     parser.add_argument('--uninstall', action='store_true')
     args = parser.parse_args()
