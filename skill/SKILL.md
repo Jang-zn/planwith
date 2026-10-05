@@ -20,8 +20,9 @@ The user should not need to run bridge commands manually.
    explicitly selects a working directory (for example with `--cd`), use that selected directory.
    Do not walk upward to the Git root. Freeze this absolute path before running shell commands;
    subsequent `cd` operations or the peer's launch directory must not change it.
-   Default all planning documents to `<host-working-directory>/docs/`, without asking the user
-   to confirm this default and without adding an initiative subfolder automatically. Honor an
+   Default the planning output base to `<host-working-directory>/docs/`, without asking the user
+   to confirm this default. Store deliverables in numbered `round-NNN/` folders under this base,
+   following the planning-round lifecycle below; do not add an initiative folder automatically. Honor an
    explicit user destination instead; resolve relative paths against the captured host directory.
    Ask and wait before creating files or invoking participants only if the host directory cannot
    be determined or explicit destination instructions conflict. Never use the installed skill
@@ -43,11 +44,18 @@ The user should not need to run bridge commands manually.
    as a table of topic, status, recommendation and link. State files contain no machine paths
    or provider session IDs. Committed documents are the handoff between computers.
 
+## Planning-round lifecycle
+
+Read [rounds.md](references/rounds.md). A planning round is an iteration of the IDEA and its
+complete deliverables, not one rebuttal exchange and not one user message. Use bundled
+`scripts/rounds.py` to allocate/resume/close it; never reset prior topic state to make a new round.
+All document paths below are relative to the CURRENT round directory. Keep older rounds unchanged.
+
 ## Bridge usage
 
 ```text
-python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/discussions/001-target init --title "Initial target"
-python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/discussions/001-target call --provider codex --phase proposal --prompt-file <absolute-prompt-file>
+python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/round-001/discussions/001-target init --title "Initial target"
+python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/round-001/discussions/001-target call --provider codex --phase proposal --prompt-file <absolute-prompt-file>
 ```
 
 Use `claude` when coordinating from Codex; `codex` when coordinating from Claude.
@@ -66,7 +74,8 @@ Use `status` to resume. Never delete state to evade limits or fabricate a user a
 ## Deliver
 
 Always read [report.md](references/report.md) and produce/update `conclusion-report.html` in
-this same output directory. Aggregate all initiative topics, including pending/unresolved ones.
+the CURRENT round directory. Aggregate current and carried-forward initiative topics, including
+pending/unresolved ones, and compare changes against the preceding round without rewriting it.
 Apply the bundled ELI5 and Korean editorial instructions with the user's formal noun-ending
 register. Use the bundled flat HTML template and meaningful diagrams/charts as appropriate.
 Refresh after decisions change, verify against source documents, and open or link the report.

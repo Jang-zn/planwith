@@ -1,9 +1,11 @@
 # Conclusion report
 
-Create or update `<confirmed-output>/conclusion-report.html` at the end of EVERY planning run,
+Create or update `<output-base>/round-NNN/conclusion-report.html` at the end of EVERY planning run,
 including runs that end with pending user input or unresolved topics. If the initial destination
 is unknown, honor the entry gate first. Aggregate ALL existing topics for this initiative, not
-just this run's three topics. Reconcile discussion index, topic directories, state and decisions.
+just this run's three topics. Include round number, previous report link, and a concise comparison
+of changed decisions, reasons and newly available evidence. Carry-forward conclusions must be
+labeled with their source round; do not imply that unchanged old scores were re-evaluated. Reconcile discussion index, topic directories, state and decisions.
 If a record is missing or contradictory, show that limitation instead of inferring a conclusion.
 Markdown remains the source of record; HTML is a readable derived report, never a second decision store.
 

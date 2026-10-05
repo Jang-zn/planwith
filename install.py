@@ -17,6 +17,8 @@ working directory (or explicitly selected working directory), not the Git root o
 Do not ask to confirm this default. Honor explicit user paths. Ask and wait only when the host
 working directory is unknown or explicit path instructions conflict. Pass that same directory
 to peer calls; later directory changes must not change the document destination.
+Store each planning iteration in docs/round-NNN/ (or the explicit output base). Update documents
+within a round; preserve earlier rounds when starting a user-requested next iteration.
 Use official local CLIs only, never API fallback.'''
 
 
