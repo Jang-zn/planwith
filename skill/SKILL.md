@@ -65,6 +65,13 @@ Use `status` to resume. Never delete state to evade limits or fabricate a user a
 
 ## Deliver
 
+Always read [report.md](references/report.md) and produce/update `conclusion-report.html` in
+this same output directory. Aggregate all initiative topics, including pending/unresolved ones.
+Apply the bundled ELI5 and Korean editorial instructions with the user's formal noun-ending
+register. Use the bundled flat HTML template and meaningful diagrams/charts as appropriate.
+Refresh after decisions change, verify against source documents, and open or link the report.
+The HTML is an additional required deliverable; keep the Markdown audit trail.
+
 Put the judge scorecard and recommendation at the top of the topic document, with the full
 contributions and user answers below. Update affected planning documents to the current
 accepted position, linking back to the topic. Distinguish AI recommendation from user approval.

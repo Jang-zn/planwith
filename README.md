@@ -61,6 +61,7 @@ CLI에서 작업 폴더를 명시적으로 선택했다면 그 폴더를 사용�
 ```text
 your-project/docs/
 ├── README.md
+├── conclusion-report.html  # 모든 안건의 결론을 모은 시각 보고서
 ├── 00-brief.md
 ├── decisions.md
 ├── open-questions.md
@@ -124,3 +125,22 @@ Python 표준 라이브러리만 사용합니다. 테스트는 실제 모델을 
 
 공식 참고: [Codex 비대화형 실행](https://learn.chatgpt.com/docs/non-interactive-mode),
 [Claude 비대화형 실행](https://code.claude.com/docs/en/headless).
+
+## 결론 보고용 HTML
+
+각 기획 실행 종료 시 `docs/conclusion-report.html`을 생성·갱신합니다. 이번 라운드뿐 아니라
+기존 전체 안건의 결론, 심판 평점과 근거, 사용자 승인 여부, 미결정 사항, 다음 행동을 포함합니다.
+중단·질문 대기 상태도 숨기지 않습니다. 원문 MD는 보존하고 보고서에서 연결합니다.
+
+디자인은 밝은 배경, 절제된 색상, 얇은 구분선과 충분한 여백을 사용하는 플랫 스타일입니다.
+비교표, 평점 막대, 흐름도, 화면 예시 등을 내용에 맞게 구성합니다. Chart.js, Three.js,
+이미지 생성 등도 필요한 경우 사용하되 핵심 내용은 네트워크나 JavaScript 없이도 읽을 수 있게 합니다.
+완료 후 호스트의 미리보기에서 열거나 파일 링크를 제공합니다.
+
+보고서 작성 시 [DreambigOu/ELI5](https://github.com/DreambigOu/ELI5)의 쉬운 설명과
+[NomaDamas/k-skill korean-humanizer](https://github.com/NomaDamas/k-skill/tree/main/korean-humanizer)의
+한국어 윤문 지침을 적용합니다. `k-윤문`이라는 정확한 이름 대신 확인한 k-skill의 윤문 스킬을
+사용합니다. 원본 지침·고정 커밋·MIT 라이선스를 `skill/references/editorial/`에 동봉하여
+추가 설치 없이 두 환경에서 함께 사용합니다. 외부 CLI 업데이트 지시는 실행하지 않습니다.
+문체는 사용자 지정에 따라 `~함`, `~임`, `~필요` 또는 명사형 종결을 사용합니다.
+독자는 비전문가 성인으로 설정하고 쉬운 표현 때문에 근거·수치·불확실성을 바꾸지 않습니다.
