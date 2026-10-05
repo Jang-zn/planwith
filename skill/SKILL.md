@@ -16,21 +16,22 @@ The user should not need to run bridge commands manually.
 
 ## Entry and persistence
 
-1. Resolve the working project's root (Git root when applicable). Establish the output directory
-   BEFORE creating folders, documents, state files, or invoking participants. Use an explicit
-   user instruction, an unambiguous project rule, or a previously user-confirmed destination for
-   this initiative. There is no implicit `docs/<initiative>/` default. If the root or destination
-   is missing, ambiguous, or conflicting, ask the user in the current conversation and wait.
-   Show the proposed absolute path (for example `<project>/docs/<initiative>/`); do not create
-   a topic merely to record this initial question. An explicit instruction such as 'save in
-   project-root docs' is sufficient: use that folder directly unless subfolders are authorized.
-   Do not ask again when the destination is already clear and confirmed.
-   Resolve relative output paths against the project root, never the CLI launch directory or
-   installed skill directory. Both hosts must use the same destination. Read existing brief,
-   decisions and discussion index there first. Record the confirmed project-relative output
-   path in the brief so another host or computer can resume; resolve its absolute path locally.
-   The bridge currently requires topics inside the project. If an external destination is
-   requested, explain that limitation and ask for an in-project destination; never silently redirect.
+1. Capture the host CLI's initial working directory as the project directory. If the host
+   explicitly selects a working directory (for example with `--cd`), use that selected directory.
+   Do not walk upward to the Git root. Freeze this absolute path before running shell commands;
+   subsequent `cd` operations or the peer's launch directory must not change it.
+   Default all planning documents to `<host-working-directory>/docs/`, without asking the user
+   to confirm this default and without adding an initiative subfolder automatically. Honor an
+   explicit user destination instead; resolve relative paths against the captured host directory.
+   Ask and wait before creating files or invoking participants only if the host directory cannot
+   be determined or explicit destination instructions conflict. Never use the installed skill
+   directory as the project directory. Pass the captured directory as `--project` to the bridge
+   and the resolved output location to every participant. Both hosts follow this same rule;
+   different launch folders intentionally have different docs folders.
+   Read existing brief, decisions and discussion index in the output directory first. Record the
+   relative output path in the brief for cross-computer handoff; resolve absolute paths locally.
+   The bridge requires topics inside `--project`. For an explicitly requested external location,
+   explain this limitation and ask for an in-project destination; never silently redirect.
 2. Extract goals, constraints and evidence from the current conversation. Ask only material
    missing questions. Do not silently assume personal use versus a public commercial product.
 3. Create/update `README.md`, `00-brief.md`, `decisions.md`, `open-questions.md`, `sources.md`.
@@ -45,8 +46,8 @@ The user should not need to run bridge commands manually.
 ## Bridge usage
 
 ```text
-python3 <skill>/scripts/peer.py --project <absolute-root> --topic <confirmed-output-relative-to-project>/discussions/001-target init --title "Initial target"
-python3 <skill>/scripts/peer.py --project <absolute-root> --topic <confirmed-output-relative-to-project>/discussions/001-target call --provider codex --phase proposal --prompt-file <absolute-prompt-file>
+python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/discussions/001-target init --title "Initial target"
+python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/discussions/001-target call --provider codex --phase proposal --prompt-file <absolute-prompt-file>
 ```
 
 Use `claude` when coordinating from Codex; `codex` when coordinating from Claude.

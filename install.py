@@ -12,8 +12,11 @@ OWNER = '.planwith-managed'
 RULE = '''When the user asks to plan, debate, or review with Claude or Codex (including
 "클로드랑 기획해봐", "코덱스랑 기획해봐"), apply the planwith skill.
 Do not invoke peer agents when PLANWITH_PARTICIPANT=1. Follow the skill's bounded
-rounds and user-input gates. If the project root or document destination is unclear,
-ask and wait before creating files or starting participants; reuse an already confirmed path.
+rounds and user-input gates. Default documents to docs/ under the host CLI's initial
+working directory (or explicitly selected working directory), not the Git root or skill folder.
+Do not ask to confirm this default. Honor explicit user paths. Ask and wait only when the host
+working directory is unknown or explicit path instructions conflict. Pass that same directory
+to peer calls; later directory changes must not change the document destination.
 Use official local CLIs only, never API fallback.'''
 
 
