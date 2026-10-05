@@ -12,7 +12,9 @@ OWNER = '.planwith-managed'
 RULE = '''When the user asks to plan, debate, or review with Claude or Codex (including
 "클로드랑 기획해봐", "코덱스랑 기획해봐"), apply the planwith skill.
 Do not invoke peer agents when PLANWITH_PARTICIPANT=1. Follow the skill's bounded
-rounds and user-input gates. Use official local CLIs only, never API fallback.'''
+rounds and user-input gates. If the project root or document destination is unclear,
+ask and wait before creating files or starting participants; reuse an already confirmed path.
+Use official local CLIs only, never API fallback.'''
 
 
 def edit_rule(path, remove=False):

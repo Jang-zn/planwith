@@ -16,9 +16,21 @@ The user should not need to run bridge commands manually.
 
 ## Entry and persistence
 
-1. Resolve the working project's root (Git root when applicable, otherwise working directory).
-   Honor the user's output location; default to `docs/<initiative>/`. Never put deliverables in
-   the installed skill directory. Read existing brief, decisions and discussion index first.
+1. Resolve the working project's root (Git root when applicable). Establish the output directory
+   BEFORE creating folders, documents, state files, or invoking participants. Use an explicit
+   user instruction, an unambiguous project rule, or a previously user-confirmed destination for
+   this initiative. There is no implicit `docs/<initiative>/` default. If the root or destination
+   is missing, ambiguous, or conflicting, ask the user in the current conversation and wait.
+   Show the proposed absolute path (for example `<project>/docs/<initiative>/`); do not create
+   a topic merely to record this initial question. An explicit instruction such as 'save in
+   project-root docs' is sufficient: use that folder directly unless subfolders are authorized.
+   Do not ask again when the destination is already clear and confirmed.
+   Resolve relative output paths against the project root, never the CLI launch directory or
+   installed skill directory. Both hosts must use the same destination. Read existing brief,
+   decisions and discussion index there first. Record the confirmed project-relative output
+   path in the brief so another host or computer can resume; resolve its absolute path locally.
+   The bridge currently requires topics inside the project. If an external destination is
+   requested, explain that limitation and ask for an in-project destination; never silently redirect.
 2. Extract goals, constraints and evidence from the current conversation. Ask only material
    missing questions. Do not silently assume personal use versus a public commercial product.
 3. Create/update `README.md`, `00-brief.md`, `decisions.md`, `open-questions.md`, `sources.md`.
@@ -33,8 +45,8 @@ The user should not need to run bridge commands manually.
 ## Bridge usage
 
 ```text
-python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/<initiative>/discussions/001-target init --title "Initial target"
-python3 <skill>/scripts/peer.py --project <absolute-root> --topic docs/<initiative>/discussions/001-target call --provider codex --phase proposal --prompt-file <absolute-prompt-file>
+python3 <skill>/scripts/peer.py --project <absolute-root> --topic <confirmed-output-relative-to-project>/discussions/001-target init --title "Initial target"
+python3 <skill>/scripts/peer.py --project <absolute-root> --topic <confirmed-output-relative-to-project>/discussions/001-target call --provider codex --phase proposal --prompt-file <absolute-prompt-file>
 ```
 
 Use `claude` when coordinating from Codex; `codex` when coordinating from Claude.
