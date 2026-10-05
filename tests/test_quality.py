@@ -28,6 +28,12 @@ def fixture(root, topic='001-target'):
     write(records/'evidence.json', [{'id':'E-01','kind':'hypothesis','claim':'Needs testing','source':'Fixture brief','checked_at':'2026-01-01','limitation':'Not observed'}])
     scores=[{'value':None,'reason':'Insufficient evidence','evidence':[],'limitation':'No study','revisit':'Interview'} for _ in range(5)]
     data={'id':topic,'title':'Target','status':'finished','recommendation':'Validate first <script>alert(1)</script>', 'confidence':'Low','approval':'pending','approval_evidence':[], 'rubric':'general', 'questions':[], 'unknowns':['Interview needed'],'blockers':[],'dissent':'Unresolved','next_action':'Interview','alternatives':[{'name':'Option A','scores':scores}]}
+    data['reader']={'kind':'general', 'question':'What should we show first?',
+        'conversation':[{'speaker':'Claude','point':'Show upcoming dates.'},{'speaker':'Codex','point':'Also show the total.'},{'speaker':'Together','point':'Dates first with a small total.'}],
+        'result':data['recommendation'], 'why':'The next payment is easy to find.',
+        'direction':'Start with a small screen.', 'plan':['Show dates first'],
+        'ai_tasks':['Prepare a mobile layout'], 'unfinished':['Real notifications are not built'],
+        'feedback':[], 'visuals':[]}
     write(folder/'conclusion.json', data)
     write(records/'report.json', {'title':'Fixture report','summary':'A test, not a real plan','topic_ids':[topic]})
     write(records/'impacts.json', [])
@@ -42,9 +48,13 @@ class ReportTests(unittest.TestCase):
             contents=output.read_text(encoding='utf-8')
             self.assertNotIn('<script>alert',contents)
             self.assertIn('&lt;script&gt;', contents)
-            self.assertIn('총점 미산출', contents)
+            self.assertNotIn('총점', contents)
+            self.assertNotIn('가중 점수', contents)
+            self.assertNotIn('근거 목록', contents)
+            self.assertIn('어떤 이야기가 오갔나', contents)
+            self.assertIn('AI가 이어서 할 일', contents)
             self.assertTrue(report.verify(root))
-            output.write_text(contents.replace('Target','Tampered'),encoding='utf-8')
+            output.write_text(contents.replace('Show dates first','Tampered'),encoding='utf-8')
             with self.assertRaisesRegex(ValueError,'content changed'):
                 report.verify(root)
             report.render(root)
@@ -84,6 +94,27 @@ class ReportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'Unknown score'):
                 report.render(root)
 
+
+
+    def test_reader_required_and_design_needs_visual(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp).resolve(); folder,data=fixture(root)
+            original=data.pop('reader')
+            write(folder/'conclusion.json',data)
+            with self.assertRaisesRegex(ValueError,'reader summary required'):
+                report.render(root)
+            data['reader']=original
+            original['kind']='design'
+            write(folder/'conclusion.json',data)
+            with self.assertRaisesRegex(ValueError,'inline screen'):
+                report.render(root)
+            original['visuals']=[{'type':'screen','title':'Screen example','caption':'Illustration only','screen_title':'Upcoming','elements':[{'type':'field','label':'Name <script>'},{'type':'button','label':'Add'}]}, {'type':'flow','title':'Flow','caption':'Illustration only','steps':['Open','Add','Save']}]
+            write(folder/'conclusion.json',data)
+            output=report.render(root).read_text(encoding='utf-8')
+            self.assertIn('mock-field',output)
+            self.assertIn('Name &lt;script&gt;',output)
+            self.assertIn('실제 저장',output)
+            self.assertTrue(report.verify(root))
 
 class DoctorTests(unittest.TestCase):
     def test_overrides_do_not_leak_values(self):

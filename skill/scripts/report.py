@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate structured conclusions and render a portable, escaped HTML report."""
 import argparse
+import base64
 from datetime import datetime, timezone
 import hashlib
 import html
@@ -60,7 +61,7 @@ def load(round_dir):
             need(any(e['id'] in conclusion['approval_evidence'] and e['kind'] == 'user' for e in evidence), 'User approval needs user evidence')
         for key in ['questions', 'unknowns', 'blockers']:
             need(isinstance(conclusion.get(key), list) and all(isinstance(x, str) for x in conclusion[key]), 'Missing text list: ' + key)
-        alternatives = conclusion.get('alternatives')
+        alternatives = conclusion.get('alternatives', [])
         need(isinstance(alternatives, list), 'alternatives must be a list (empty when not judged)')
         rubric = conclusion.get('rubric', 'general')
         need(rubric == state.get('rubric', 'general'), 'Rubric differs from pre-debate declaration')
@@ -99,46 +100,107 @@ def fingerprint(root):
     return digest.hexdigest()
 
 
+def reader_fields(topic):
+    """Reader summaries are authored from the discussion, never guessed from scores."""
+    reader = topic.get('reader')
+    need(isinstance(reader, dict), topic['id'] + ': reader summary required; rewrite from discussion, not scores')
+    text_fields(reader, ['question', 'result', 'why', 'direction'], 'reader')
+    conversation = reader.get('conversation')
+    need(isinstance(conversation, list) and conversation, 'Reader needs a short account of the actual discussion')
+    for turn in conversation:
+        text_fields(turn, ['speaker', 'point'], 'conversation')
+    for field in ['plan', 'ai_tasks', 'unfinished']:
+        need(isinstance(reader.get(field), list) and all(isinstance(x, str) for x in reader[field]), 'Missing reader list: ' + field)
+    questions = reader.get('feedback')
+    need(isinstance(questions, list), 'feedback must be a list')
+    for question in questions:
+        text_fields(question, ['question', 'recommendation', 'why_user'], 'feedback')
+        need(isinstance(question.get('options'), list) and len(question['options']) >= 2, 'Feedback needs understandable options')
+        for option in question['options']:
+            text_fields(option, ['label', 'effect'], 'feedback option')
+    visuals = reader.get('visuals')
+    need(isinstance(visuals, list), 'visuals must be a list')
+    need(reader.get('kind') in ['general','design','engineering'], 'Reader kind required')
+    if reader['kind'] in ['design','engineering']:
+        need(visuals, 'Design/engineering conclusions need an inline screen or flow example')
+    for visual in visuals:
+        text_fields(visual, ['title', 'caption', 'type'], 'visual')
+        if visual['type'] == 'flow':
+            need(isinstance(visual.get('steps'), list) and len(visual['steps']) >= 2 and all(isinstance(x,str) for x in visual['steps']), 'Flow needs at least two labeled steps')
+        elif visual['type'] == 'screen':
+            text_fields(visual, ['screen_title'], 'screen')
+            need(isinstance(visual.get('elements'),list) and visual['elements'], 'Screen needs elements')
+            for element in visual['elements']:
+                text_fields(element, ['type','label'], 'screen element')
+                need(element['type'] in ['text','field','button','card'], 'Unsupported screen element')
+        elif visual['type'] == 'image':
+            text_fields(visual,['path','alt'], 'image')
+        else:
+            raise ValueError('Unknown visual type')
+    return reader
+
+
 def render(round_dir):
     root, data, topics, evidence, impacts = load(round_dir)
     esc = lambda value: html.escape(str(value), quote=True)
-    ul = lambda values: '<ul>' + ''.join('<li>' + esc(x) + '</li>' for x in values) + '</ul>' if values else '<p class="note">해당 사항 없음</p>'
-    table = lambda headers, rows: '<div class="table-wrap"><table><thead><tr>' + ''.join('<th>' + esc(x) + '</th>' for x in headers) + '</tr></thead><tbody>' + ''.join('<tr>' + ''.join('<td>' + cell + '</td>' for cell in row) + '</tr>' for row in rows) + '</tbody></table></div>'
-    approval = {'pending':'사용자 미확정', 'approved':'사용자 승인', 'rejected':'사용자 기각'}
-    status = {'active':'논의 중', 'waiting_for_user':'사용자 입력 대기', 'finished':'논의 종료'}
-    parts = [f'<header><p class="meta">PLANWITH · {esc(root.name)}</p><h1>{esc(data["title"])}</h1><p class="meta">갱신: {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}</p></header>', f'<section><h2>핵심 결론</h2><p class="summary">{esc(data["summary"])}</p></section>']
+    readers = [(topic, reader_fields(topic)) for topic in topics]
+    ul = lambda values: '<ul>' + ''.join('<li>' + esc(x) + '</li>' for x in values) + '</ul>'
+    parts = [f'<header><p class="meta">PLANWITH · {esc(root.name)}</p><h1>{esc(data["title"])}</h1><p class="meta">{datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}</p></header>', f'<section><h2>이번에는 이렇게 정리함</h2><p class="summary lead">{esc(data["summary"])}</p></section>']
     meta = read(root/'records/round.json') if (root/'records/round.json').exists() else {}
     previous = meta.get('previous')
     if previous and re.fullmatch(r'round-\d{3,}', previous):
-        parts.append('<p><a href="../'+esc(previous)+'/conclusion-report.html">이전 라운드 보고서</a></p>')
-    parts += ['<section><h2>이번에 결정할 것</h2>' + ul([q for t in topics for q in t['questions']]) + '</section>', '<section><h2>아직 모르는 것</h2>' + ul([q for t in topics for q in t['unknowns']]) + '</section>']
-    rows = [[esc(t['title']), esc(t['recommendation']), esc(status.get(t['status'],t['status'])),esc(approval[t['approval']])] for t in topics]
-    parts.append('<section><h2>전체 안건</h2>' + table(['안건','권고','진행 상태','사용자 결정'], rows) + '</section>')
-    parts.append('<section><h2>지난 라운드와 달라진 것</h2>')
-    if not impacts:
-        parts.append('<p>첫 라운드 또는 변경 사항 없음.</p>')
-    for impact in impacts:
-        parts.append(f'<h3>{esc(impact["decision"])}</h3><p>{esc(impact["before"])} → {esc(impact["after"])}</p><p>{esc(impact["reason"])}</p>')
-        labels = {'updated':'갱신 완료','retained':'유지 근거 있음','review_needed':'재검토 필요'}
-        parts.append(table(['영향 범위','상태','이유'],[[esc(a['name']),labels[a['status']],esc(a['reason'])] for a in impact['areas']]))
-    parts.append('</section>')
+        parts.append('<p><a href="../'+esc(previous)+'/conclusion-report.html">지난 보고서</a></p>')
+    parts.append('<nav aria-label="논의 주제"><h2>무슨 이야기를 했나</h2><ul>')
+    for topic, reader in readers:
+        parts.append('<li><a href="#'+esc(topic['id'])+'">'+esc(reader['question'])+'</a></li>')
+    parts.append('</ul></nav>')
+    for topic, reader in readers:
+        label = {'pending':'두 AI의 제안 · 아직 사용자 확정 전', 'approved':'사용자가 정한 방향', 'rejected':'사용자가 채택하지 않은 제안'}[topic['approval']]
+        parts.append(f'<section id="{esc(topic["id"])}"><p class="meta">{esc(label)}</p><h2>{esc(reader["question"])}</h2><h3>어떤 이야기가 오갔나</h3><div class="conversation">')
+        for turn in reader['conversation']:
+            parts.append('<div class="turn"><strong>'+esc(turn['speaker'])+'</strong><p>'+esc(turn['point'])+'</p></div>')
+        parts.append('</div><div class="summary"><h3>그래서 나온 결론</h3><p class="lead">'+esc(reader['result'])+'</p><p>'+esc(reader['why'])+'</p></div>')
+        parts.append('<h3>이렇게 진행하려 함</h3><p>'+esc(reader['direction'])+'</p>'+ul(reader['plan']))
+        for visual in reader['visuals']:
+            parts.append('<figure><h3>'+esc(visual['title'])+'</h3>')
+            if visual['type']=='flow':
+                parts.append('<ol class="flow">'+''.join('<li>'+esc(step)+'</li>' for step in visual['steps'])+'</ol>')
+            elif visual['type']=='screen':
+                parts.append('<div class="screen"><div class="screen-header">'+esc(visual['screen_title'])+'</div>')
+                for element in visual['elements']:
+                    parts.append('<div class="mock-'+esc(element['type'])+'">'+esc(element['label'])+'</div>')
+                parts.append('</div><p class="note">화면 예시이며 실제 저장·결제 등은 실행되지 않음.</p>')
+            else:
+                path=(root/visual['path']).resolve()
+                need(root in path.parents and path.is_file(), 'Image must exist inside the round folder')
+                mime={'.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'}.get(path.suffix.lower())
+                need(mime, 'Use PNG, JPEG or WebP images')
+                need(path.stat().st_size <= 10_000_000, 'Image exceeds 10 MB; reduce it before embedding')
+                parts.append('<img alt="'+esc(visual['alt'])+'" src="data:'+mime+';base64,'+base64.b64encode(path.read_bytes()).decode()+'">')
+            parts.append('<figcaption>'+esc(visual['caption'])+'</figcaption></figure>')
+        parts.append('</section>')
+    tasks=[task for _,r in readers for task in r['ai_tasks']]
+    unfinished=[task for _,r in readers for task in r['unfinished']]
+    if tasks:
+        parts.append('<section><h2>AI가 이어서 할 일</h2>'+ul(tasks)+'</section>')
+    if unfinished:
+        parts.append('<section><h2>아직 끝내지 못한 것</h2>'+ul(unfinished)+'</section>')
+    feedback=[q for _,r in readers for q in r['feedback']]
+    parts.append('<section><h2>이 방향에 대한 의견을 듣고 싶음</h2>')
+    if not feedback:
+        parts.append('<p>지금 꼭 선택할 항목은 없음. 바꾸고 싶은 방향이나 더하고 싶은 의견을 대화에 남기면 다음 논의에 반영함.</p>')
+    for question in feedback:
+        parts.append('<h3>'+esc(question['question'])+'</h3><p>'+esc(question['recommendation'])+'</p><p class="note">'+esc(question['why_user'])+'</p>'+ul([o['label']+' — '+o['effect'] for o in question['options']]))
+    parts.append('<p class="note">의견은 이 보고서를 받은 대화에 입력하면 됨. 제시한 선택지 외의 생각도 반영 가능함.</p></section>')
+    if impacts:
+        parts.append('<section><h2>지난번 의견을 이렇게 반영함</h2>')
+        for impact in impacts:
+            parts.append('<h3>'+esc(impact['decision'])+'</h3><p>'+esc(impact['before'])+' → '+esc(impact['after'])+'</p><p>'+esc(impact['reason'])+'</p>')
+        parts.append('</section>')
+    parts.append('<footer><details><summary>필요할 때만 보는 전체 기록</summary><ul>')
     for topic in topics:
-        parts.append(f'<section id="{esc(topic["id"])}"><h2>{esc(topic["title"])}</h2><p class="lead">{esc(topic["recommendation"])}</p><p>확신도: {esc(topic["confidence"])} · {approval[topic["approval"]]}</p>')
-        weights = RUBRICS[topic.get('rubric','general')]
-        for alt in topic['alternatives']:
-            parts.append('<h3>' + esc(alt['name']) + '</h3>')
-            rows=[]
-            for criterion, weight, score in zip(CRITERIA, weights, alt['scores']):
-                value=score['value']
-                visual='판단 불가' if value is None else f'<meter min="0" max="5" value="{value}" aria-label="{esc(criterion)} {value}점"></meter> {value}/5'
-                rows.append([esc(criterion)+f' ({weight}%)', visual, esc(score['reason']),esc(', '.join(score['evidence'])),esc(score['limitation']+' / 재검토: '+score['revisit'])])
-            parts.append(table(['기준·비중','점수','근거','근거 ID','한계·재검토'],rows))
-            values=[s['value'] for s in alt['scores']]
-            total='판단 불가 항목으로 총점 미산출' if any(v is None for v in values) else f'가중 점수: {sum(v*w/5 for v,w in zip(values,weights)):.1f}/100'
-            parts.append('<p class="note">'+total+' · 점수는 검토 판단이며 성공 확률이 아님.</p>')
-        parts.append('<h3>필수 조건</h3>'+ul(topic['blockers'])+ '<p>남은 이견: '+esc(topic['dissent'])+'</p><p>다음 행동: '+esc(topic['next_action'])+'</p>')
-        parts.append(f'<details><summary>상세 논의 기록</summary><a href="records/discussions/{esc(topic["id"])}/discussion.md">안건 원문</a></details></section>')
-    parts.append('<section><h2>근거 목록</h2>'+table(['ID·유형','주장','출처·확인일','한계'],[[esc(e['id']+' · '+e['kind']),esc(e['claim']),esc(e['source']+' · '+e['checked_at']),esc(e['limitation'])] for e in evidence])+'</section>')
+        parts.append('<li><a href="records/discussions/'+esc(topic['id'])+'/discussion.md">'+esc(topic['title'])+' 논의 기록</a></li>')
+    parts.append('</ul></details></footer>')
     template=(Path(__file__).resolve().parents[1]/'assets/conclusion-report.html').read_text(encoding='utf-8')
     css=template.split('<style>',1)[1].split('</style>',1)[0]
     output='<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(data['title'])+'</title><style>'+css+'</style></head><body><main>'+''.join(parts)+'</main><!-- planwith-source:'+fingerprint(root)+' --></body></html>'
@@ -148,7 +210,9 @@ def render(round_dir):
 
 
 def verify(round_dir):
-    root, *_ = load(round_dir)
+    root, _, topics, _, _ = load(round_dir)
+    for topic in topics:
+        reader_fields(topic)
     expected='<!-- planwith-source:'+fingerprint(root)+' -->'
     need(expected in (root/'conclusion-report.html').read_text(encoding='utf-8'), 'Report stale: source records changed; regenerate')
     # Detect modifications after validated rendering; semantic source truth still needs review.

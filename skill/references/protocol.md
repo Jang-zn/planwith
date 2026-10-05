@@ -11,51 +11,43 @@ an explicit user response introducing new conditions after completion. Record wh
 The script enforces topic limits, phase progression and input gates. The coordinator enforces
 the run-wide three-topic limit and semantic rules below; it is not an autonomous background daemon.
 
-## Debate
+## Collaborative thesis → antithesis → synthesis
 
-1. Write the coordinator's independent proposal before seeing the peer's. Send only the common
-   brief to the peer for its independent proposal. Give material claims stable IDs (A-01, B-01).
-2. Each side restates the strongest version of the other proposal, then identifies at most three
-   decision-changing objections with evidence, impact and an alternative. Save both sides.
-3. Each side accepts, rejects with reasons, or marks each objection as needing validation.
-   Preserve what changed and what did not. Do not demand disagreement for its own sake.
-4. Send a standalone judge brief to a fresh CLI call. Prefer the opposite provider to the host.
-   Remove author names where practical, label alternatives A/B, and include the constraints,
-   evidence, rebuttals, current revised claims and fixed scoring rubric. Do not omit inconvenient
-   arguments. Fresh context is not a guarantee of neutrality.
-5. The judge may authorize only one additional targeted exchange if the issue changes a real
-   decision, has a new unanswered argument, can progress with available evidence, and budget remains.
-   Use `final` then `verdict`. Otherwise stop. For important decisions, the remaining verdict call
-   may be a different-provider independent check instead. Disagreeing judges do not trigger more judges.
+The purpose is a better shared proposal, not winning an argument. Independent first ideas are
+useful; ownership must not prevent combining them. Use the same bounded phases in peer.py:
 
-## Scorecard
+1. `proposal`: state an initial idea (thesis), why it helps the user and what to discuss with the peer.
+2. `critique`: respond to the other idea (antithesis): what is useful, what is missing, what you would
+   change and why. Ask "What if we combine this with ...?" Do not manufacture opposition.
+3. `revision`: synthesize a genuinely improved proposal. Specify which useful elements from each
+   side were retained, changed or dropped, and how the new whole serves the user's goal better.
+   Both sides respond to that synthesis. Agreement is allowed; forced compromise is not required.
+4. `judge`: a fresh session acts as synthesis editor and completion reviewer, not a score referee.
+   Check whether the resulting proposal answers the user's request, resolves the actual concerns,
+   and is concrete enough to explain. Identify what AI can finish itself and what only the user
+   can choose. Produce a usable joint recommendation in plain language, not a leaderboard.
+5. If one specific unresolved issue can improve the synthesis within budget, `final` exchanges
+   explore it and `verdict` edits the final shared proposal. Otherwise stop and report progress.
+   Further thesis/antithesis/synthesis cycles require the next user-directed planning round.
 
-Score comparable proposals/claims, not models. Default equal weights, set BEFORE seeing proposals:
-- Problem/goal fit (0–5)
-- Evidence quality (0–5)
-- Feasibility under actual constraints (0–5)
-- Cost and risk response (0–5)
-- Response to material objections (0–5)
+Do not calculate a winner from points or report a tie. Numeric scoring is OPTIONAL internal
+support only if useful or explicitly requested; store it in records, never the default HTML.
+Existing rubric/score fields remain supported for older records, not required for new debate.
+If the user asks for scoring again, preserve the grounded-score rules: no unsupported numbers,
+no success-probability claims, and constraints override totals. The user still receives a clear
+recommendation, not a homework assignment to interpret scores.
 
-Anchors: 0 contradicts requirements/evidence; 1 major unsupported gaps; 2 substantial gaps;
-3 plausible with explicit limitations; 4 well supported with minor gaps; 5 strongly supported
-and addresses material alternatives. Explain criteria-specific reasoning, do not just repeat anchors.
-Use **not assessable** when evidence is absent; do not convert that to zero or compute a misleading
-total. When all criteria are assessable, show total /25 (or predeclared weighted total).
-Every score requires a claim/evidence reference, limitation, and what could change the score.
-Scores are review judgments, not probability of commercial success. Confidence is separate:
-low/medium/high with reasons. Disqualifying constraints override totals. Do not average away
-missing permissions, essential feasibility or required user choices. Explicitly retain dissent.
-
-Judge output must include score table, per-criterion reasons, decisive differences, assumptions,
-blocking conditions, recommendation, confidence, unresolved questions, re-evaluation conditions,
-and termination verdict: recommendation / conditional / validation-needed / user-decision / budget.
+A synthesis must say what is proposed, why, what will be done, what remains, and which specific
+preference/direction question needs user input. Do not claim the user approved an AI agreement.
 
 ## User input
 
-Ask immediately when an answer changes the premise; otherwise group up to three questions at
-round end with options, consequences and a recommendation. Always allow free text. Participants
+Ask immediately when an answer changes the premise; otherwise present the joint proposal first and ask at most three direction/preference questions
+with plain consequences and a recommended default. Always allow free text. Participants
 flag questions to the coordinator; only the coordinator asks the user in the host conversation.
+AI handles research, comparisons and internal checks itself within the authorized scope. Do not
+ask the user to perform generic hypothesis validation or interpret a tied score. If an external
+fact genuinely cannot be checked, explain only the practical effect on the proposal.
 Pause the affected topic before asking. No answer is not consent. Unrelated topics may proceed
 within the run budget. Record exact answer, interpreted constraint and affected claim IDs.
 New input does not reset call budgets. If necessary, finish with unresolved work and request a
@@ -65,7 +57,7 @@ new bounded cycle. Never let a judge resolve the user's risk preferences on thei
 
 Use `discussion-template.md` as the topic layout. Bridge state is mechanical bookkeeping,
 not a substitute for readable discussion. Preserve chronological outputs below the current
-scorecard. Research uses the host's authorized tools; peer calls receive cited excerpts and dates.
+shared proposal. Research uses the host's authorized tools; peer calls receive cited excerpts and dates.
 AI role-play of a customer is not customer evidence. For design, compare actual task flows or
 prototypes when available. For technical and business plans, separate known facts from estimates.
 Do not store secrets or unnecessary personal data in Git-bound discussions.

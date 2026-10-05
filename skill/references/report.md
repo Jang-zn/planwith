@@ -1,74 +1,67 @@
-# Conclusion report
+# Report for the human, not for agents
 
-Create or update `<output-base>/round-NNN/conclusion-report.html` at the end of EVERY planning run,
-including runs that end with pending user input or unresolved topics. If the initial destination
-is unknown, honor the entry gate first. Aggregate ALL existing topics for this initiative, not
-just this run's three topics. Include round number, previous report link, and a concise comparison
-of changed decisions, reasons and newly available evidence. Carry-forward conclusions must be
-labeled with their source round; do not imply that unchanged old scores were re-evaluated. Reconcile discussion index, topic directories, state and decisions.
-If a record is missing or contradictory, show that limitation instead of inferring a conclusion.
-Read source Markdown and state from the current round's `records/` (legacy rounds retain their old paths).
-Markdown remains the source of record; HTML is a readable derived report, never a second decision store.
+Create/update `<output-base>/round-NNN/conclusion-report.html`. Cover every current and carried-forward
+topic, including unfinished ones. Keep Markdown, evidence IDs, scoring, confidence labels, hypothesis
+ledgers, internal quality checks and research methodology in records. These are NOT report sections.
+Do not just collapse internal score tables: omit them from reader HTML by default.
 
-## Editorial passes (required)
+## Required reading experience
 
-1. Read [ELI5](editorial/eli5/SKILL.md). Explicit audience: nontechnical adult decision-maker,
-   not a literal child. Explain what was decided, why it matters and what happens next. Define
-   necessary jargon on first use; use concrete examples only when they clarify. Never sacrifice
-   factual accuracy for simplicity; this overrides upstream's suggestion to accept 80% accuracy.
-2. Read [korean-humanizer source instructions](editorial/korean-humanizer/instruction.md),
-   using the bundled [taxonomy](editorial/korean-humanizer/references/ai-tell-taxonomy.md) as needed.
-   These pinned sources are packaged locally; do NOT run the upstream npx stub or updater.
-   Apply to the report draft, not to verbatim debate transcripts. Preserve names, numbers,
-   scores, conditions, citations and dissent. Source attribution and MIT licenses are adjacent.
-3. User-required register overrides casual upstream examples: Korean formal report style with
-   `~함`, `~임`, `~필요`, `~예정`, or clear noun endings. No `~해요`, chatty questions, emojis or
-   promotional filler. Prefer `고객 5명에게 확인 필요` over `고객 대상 검증의 수행 필요성 존재`.
-   Noun endings must not produce opaque noun chains. Use neutral language; do not claim stylistic
-   patterns prove AI authorship. At most two editing passes; preserve limitations rather than
-   polishing uncertain claims into facts. Do not print editorial diagnostics in the reader's report.
+The reader should immediately understand:
+1. What was discussed?
+2. What did each side suggest, and how did those ideas improve each other?
+3. What conclusion did the agents reach, and why is it useful?
+4. What do we propose doing now? What did the user actually decide already?
+5. What will AI handle next, and what has not been finished?
+6. What direction, choice, preference or added opinion do we want from the user?
 
-## Content and layout
+Give the joint recommendation FIRST, explain the short discussion story, and end with an invitation
+for feedback. Do not dump transcripts, jargon, confidence labels, evidence IDs, scores or tied
+alternatives onto the reader. Do not make them solve the agents' analysis. Recommendations must be
+concrete: "처음에는 이름과 날짜만 입력하도록 구성함" rather than "가설 검증 필요".
+Uncertainty still matters: if it changes the user's choice, explain its practical consequence in
+one simple sentence. Never hide a real blocker or present unverified behavior as completed work.
 
-Use the validated renderer described in quality.md; it uses `assets/conclusion-report.html` for the
-base visual style. Extend its structured rendering when additional visuals materially help.
-Replace every example/placeholder before delivery. Set title, initiative, update date and scope.
-Lead with the overall conclusion, then a compact map/table of EVERY topic with state, recommendation,
-confidence, user approval status, blockers and links to its section and original discussion.
-For each topic: plain-language conclusion, why, options compared, judge scores and their reasons,
-remaining dissent, required validation, user decision and next action. Preserve unassessable scores;
-never plot them as zero. Do not rank unrelated topics or different scoring rubrics together.
-Include source dates and evidence links; distinguish empirical measures from model review scores.
+## Language
 
-Visualize where it clarifies: labeled 0–5 bars for comparable criteria, a decision/approval flow,
-phase roadmap, system diagram or screen-flow examples. Every chart needs units, a plain-language
-caption and a text/table equivalent. Illustrative screens/images must be labeled as examples,
-not as validated product behavior. Do not invent chart data or dates to make visuals attractive.
+Apply bundled [ELI5](editorial/eli5/SKILL.md): vocabulary simple enough for a five-year-old,
+short concrete sentences, one thought per sentence. Respect the adult reader; no baby talk.
+Explain any unavoidable technical word immediately. Do not sacrifice factual accuracy.
+Then use the bundled [Korean editorial source](editorial/korean-humanizer/instruction.md).
+Do not execute its upstream npx updater. User register remains `~함`, `~임`, `~예정`, noun endings;
+avoid `~해요`, opaque noun chains, jargon, and promotional filler. Changes in content are deliberate
+summarization of the discussion, not fabrication of quotes, agreement, work completed or user approval.
 
-Flat, quiet design: white/off-white background, dark text, one restrained accent, thin borders,
-ample space, readable type (body at least 16px), comfortable line height, limited content width.
-No decorative gradients, glass panels, large shadows or ornamental motion. Mobile layout,
-keyboard navigation, visible focus, semantic headings, contrast and print CSS are required.
-Use clear status text as well as color. Keep technical implementation details out of the report.
+## Structure and visuals
 
-No blanket tool restriction: use SVG, Mermaid rendered to SVG, Chart.js, Three.js, screen mockups,
-or available image generation when materially useful. Do not force 3D or images into simple
-comparisons. Use the host's available image-generation capability; do not introduce API keys.
-If a requested tool is unavailable, use an honest suitable alternative. All essential conclusions
-must remain readable without JavaScript, network, WebGL or optional visual assets. Prefer inline
-CSS/SVG and embedded images for a portable HTML; locally bundle needed libraries/assets and link
-relatively when embedding is impractical. Avoid CDN-only core content or runtime fetch of MD/JSON
-that breaks when the report is opened via file://. Never insert raw untrusted text as HTML/script.
+Use report.py and the reader schema in quality.md. The author must write the reader narrative
+from the actual discussion; a renderer cannot turn an evidence ledger into a good story on its own.
+Legacy records without a reader summary must fail with a clear request to write that summary;
+do not silently invent dialogue or put the old machine report back on screen.
 
-## Verification and handoff
+Discussion summaries may be paraphrases labeled by speaker; do not present paraphrases as verbatim
+quotes. Show the initial idea, useful response and resulting synthesis. Never force fictional
+opposition into an otherwise agreeable discussion.
 
-- Match topic count/IDs/statuses, scores, recommendations and user approvals against source MD.
-- Confirm no placeholders, fabricated facts, missing/unlinked topics or broken relative links.
-- Open/render at desktop and mobile widths with available browser tools; inspect overflow,
-  labels, table readability, keyboard controls and print layout. Repair before delivery. If visual
-  tools are unavailable, disclose that visual QA is unverified instead of claiming success.
-- Open the HTML in the host preview/browser when supported, otherwise provide its absolute file
-  link and tell the user it can be opened directly in a browser. Link it from `records/README.md` using `../conclusion-report.html`. Present the HTML as the
-  default deliverable; it must be understandable without opening any MD. Links from the report
-  to detailed evidence use `records/...` and are secondary.
-- A later decision or user answer requires refreshing this same report, including its timestamp.
+Screen-planning topics MUST show actual illustrative screen layouts inline: labels, example inputs,
+buttons/cards and the task flow. Engineering topics MUST show a simple labeled flow or diagram of
+what happens, not just a component-name list. Mark mockups as examples, distinguish built from planned,
+and keep all important information visible without opening another file. A screenshot of text is
+not a useful diagram. The renderer supports `screen`, `flow`, and embedded PNG/JPEG/WebP `image`.
+Use available image generation/visual tools when helpful; no API fallback or unnecessary decoration.
+For interactive/3D needs, extend the structured renderer with an accessible static fallback.
+
+White/light background, flat panels, one restrained accent, readable type, space between ideas,
+mobile layout and print CSS. No ornamental animation or inflated dashboards. Topic navigation
+and a small optional link to records are enough; avoid a wall of tables and badges.
+
+## Verify
+
+Read the report as the user: can they say "what are we doing and what do they want from me" in
+under a minute? Does it explain actual synthesis instead of scores? Does every question truly
+need the user's preference? Are unfinished tasks clearly separate from work assigned to AI?
+Render and verify source integrity with report.py. Check all topics, approval truth, narrative
+fidelity, and inline examples. Inspect desktop/mobile layout when browser tools permit; disclose
+unverified visual QA when blocked. Do not rewrite prior round outputs without explicit user request.
+Present/open the HTML by default and invite feedback in the host conversation. HTML is a static
+report, not a working feedback-submission form; never imply that answers entered there are saved.

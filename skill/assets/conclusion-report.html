@@ -7,45 +7,23 @@
 <style>
 :root{color-scheme:light;--ink:#202b35;--muted:#52616d;--line:#d8dee3;--accent:#205b79;--paper:#f5f7f8}
 *{box-sizing:border-box}body{margin:0;background:white;color:var(--ink);font:16px/1.75 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1080px;margin:auto;padding:48px 28px}h1,h2,h3{line-height:1.35;letter-spacing:-.025em}h1{font-size:36px}h2{font-size:24px;margin-top:0}h3{font-size:18px}p{max-width:76ch}a{color:var(--accent);text-underline-offset:4px}a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.meta,.note{color:var(--muted)}.lead{font-size:20px}.summary{padding:24px;background:var(--paper);border-left:4px solid var(--accent)}section{padding:32px 0;border-bottom:1px solid var(--line)}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;text-align:left}caption{text-align:left;color:var(--muted);margin-bottom:12px}th,td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--paper);font-weight:600}.tag{display:inline-block;padding:2px 9px;border:1px solid var(--line);font-size:14px;white-space:nowrap}.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}.flow{display:flex;gap:12px;padding:0;list-style:none;counter-reset:step}.flow li{flex:1;border:1px solid var(--line);padding:16px}.flow li:before{counter-increment:step;content:counter(step) ". ";font-weight:700;color:var(--accent)}meter{width:110px;height:20px;vertical-align:middle}details{border-top:1px solid var(--line);padding:16px 0}summary{cursor:pointer;font-weight:600}footer{padding-top:24px;color:var(--muted)}.skip{position:absolute;left:-10000px}.skip:focus{left:12px;top:12px;background:white;padding:10px}
+.conversation{display:grid;gap:12px;margin:20px 0}.turn{border-left:2px solid var(--line);padding:10px 18px}.turn p{margin:6px 0}.screen{max-width:420px;margin:20px auto;border:1px solid var(--line);padding:22px;background:#fafbfc}.screen-header{font-size:21px;font-weight:700;margin-bottom:22px}.mock-field,.mock-card{background:white;border:1px solid var(--line);padding:14px;margin:12px 0}.mock-button{background:var(--accent);color:white;text-align:center;padding:12px;margin:16px 0}.mock-text{margin:12px 0}figure{margin:28px 0}figcaption{color:var(--muted);margin-top:12px}img{max-width:100%;height:auto}nav{border-bottom:1px solid var(--line);padding:24px 0}.flow{flex-wrap:wrap}.flow li{min-width:140px}
 @media(max-width:640px){main{padding:28px 18px}h1{font-size:28px}.grid{grid-template-columns:1fr}.flow{flex-direction:column}th,td{padding:10px 8px}.summary{padding:18px}}
 @media print{main{max-width:none;padding:0}section{break-inside:avoid}details>*{display:block!important}a{color:inherit}meter{display:none}.table-wrap{overflow:visible}.note{color:#333}}
 </style>
 </head>
 <body>
-<a class="skip" href="#conclusion">결론으로 이동</a>
 <main>
-<header>
-<p class="meta">PLANWITH · 결론 보고</p>
-<h1>[기획명] 결론 보고서</h1>
-<p class="meta">갱신: [작성 일시] · 범위: [전체 안건 수]개 · 문서 상태: [초안/검토 완료]</p>
-<p class="note">작성 양식임. 대괄호 항목과 예시 내용을 실제 논의 결과로 교체한 뒤 배포 필요.</p>
-</header>
-<section id="conclusion">
-<h2>핵심 결론</h2>
-<div class="summary"><p class="lead">[무엇을 어떤 조건으로 추진할지 한 문장으로 설명]</p><p>[선택 이유와 사용자에게 미치는 영향. 미확인 사항은 분리하여 명시]</p></div>
+<header><p class="meta">PLANWITH</p><h1>[무엇을 만들려는지 쉬운 말로 설명]</h1></header>
+<section><h2>이번에는 이렇게 정리함</h2><p class="summary">[함께 도출한 방향을 한두 문장으로 설명]</p></section>
+<section><h2>[이번에 이야기한 질문]</h2>
+<h3>어떤 이야기가 오갔나</h3>
+<div class="conversation"><div class="turn"><strong>[첫 생각]</strong><p>[구체적인 첫 제안]</p></div><div class="turn"><strong>[보완 의견]</strong><p>[좋은 점과 더한 생각]</p></div></div>
+<div class="summary"><h3>그래서 나온 결론</h3><p>[두 생각을 어떻게 합쳤고 왜 나아졌는지 설명]</p></div>
+<h3>이렇게 진행하려 함</h3><p>[실제 할 일을 쉬운 말로 설명]</p>
 </section>
-<section>
-<h2>전체 안건</h2>
-<div class="table-wrap"><table><caption>전체 안건의 권고와 승인 상태. 미결정 안건도 포함.</caption><thead><tr><th>안건</th><th>현재 결론</th><th>상태</th><th>사용자 결정</th></tr></thead><tbody>
-<tr><td><a href="#topic-001">[001. 안건명]</a></td><td>[조건부 권고 내용]</td><td><span class="tag">검증 필요</span></td><td>미결정</td></tr>
-</tbody></table></div>
-</section>
-<section id="topic-001">
-<h2>[001. 안건명]</h2>
-<p class="lead">[전문지식 없이 이해할 수 있는 결론]</p>
-<div class="grid"><div><h3>선택 이유</h3><p>[기준, 근거, 현실적 효과를 짧게 설명]</p></div><div><h3>남은 조건</h3><p>[남은 이견, 근거 부족, 사용자 확인 사항]</p></div></div>
-<div class="table-wrap"><table><caption>심판 평가: 0~5점. 사업 성공 확률이 아닌 주장 검토 점수.</caption><thead><tr><th>기준</th><th>대안 A</th><th>대안 B</th><th>평가 근거</th></tr></thead><tbody>
-<tr><td>[실제 평가 기준]</td><td>판단 불가</td><td>판단 불가</td><td>[자료 부재 또는 실제 점수의 근거]</td></tr>
-</tbody></table></div>
-<p class="note">확신도: [낮음/보통/높음 및 이유]. 필수 조건: [점수와 별도로 확인할 사항].</p>
-<details open><summary>평가 근거와 재검토 조건</summary><p>[주장 ID, 출처, 점수별 근거, 한계, 재평가 조건]</p><p><a href="records/discussions/001-target/discussion.md">안건 원문 확인</a></p></details>
-</section>
-<section>
-<h2>다음 행동</h2>
-<ol class="flow"><li>[확인할 내용]<br><span class="note">[담당·완료 기준]</span></li><li>[결정할 내용]<br><span class="note">[진행 조건]</span></li><li>[실행할 내용]<br><span class="note">[완료 기준]</span></li></ol>
-<p class="note">위 순서는 실행 흐름이며, 확인되지 않은 일정이나 성과를 의미하지 않음.</p>
-</section>
-<footer>근거 문서: <a href="records/README.md">기획 목차</a> · <a href="records/decisions.md">결정 기록</a> · <a href="records/sources.md">출처</a><p>AI 권고와 사용자 확정 사항을 구분하여 표시함.</p></footer>
+<section><h2>AI가 이어서 할 일</h2><p>[AI가 맡아서 할 일을 설명]</p></section>
+<section><h2>아직 끝내지 못한 것</h2><p>[아직 안 된 것과 진행에 미치는 영향]</p></section>
+<section><h2>이 방향에 대한 의견을 듣고 싶음</h2><p>[추천 방향을 제시한 뒤 사용자의 선택·선호·추가 의견을 요청]</p></section>
 </main>
-</body>
-</html>
+</body></html>

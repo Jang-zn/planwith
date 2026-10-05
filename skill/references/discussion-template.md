@@ -3,18 +3,13 @@
 Status: draft / active / waiting for user / finished
 Coordinator: Claude or Codex
 
-## Judge scorecard
+## Shared proposal and why it improved
 
-| Criterion | Proposal A | Proposal B | Evidence / limitation |
-|---|---:|---:|---|
-| Goal fit | | | |
-| Evidence | | | |
-| Feasibility | | | |
-| Cost and risk | | | |
-| Objection response | | | |
+Initial idea → useful challenge or addition → combined direction.
+Explain what changed and why the user benefits. Optional numeric analysis stays internal.
 
 ### Reasons and recommendation
-For every score: claim/source references, reasoning, limitations, revision conditions.
+For the shared proposal: concrete rationale, unresolved issues and next steps.
 Confidence and justification. Blocking constraints. Dissent. Stop verdict.
 
 ## Context and constraints

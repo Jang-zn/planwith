@@ -1,6 +1,6 @@
 ---
 name: planwith
-description: Plan or review with both Claude and Codex through their locally authenticated official CLIs. Use when the user asks to plan with Claude/Codex, 코덱스랑 기획, 클로드랑 기획, or cross-model debate. Produces topic-based discussions, grounded judge scorecards, and project planning documents with user decision gates.
+description: Plan or review with both Claude and Codex through their locally authenticated official CLIs. Use when the user asks to plan with Claude/Codex, 코덱스랑 기획, 클로드랑 기획, or cross-model debate. Produces topic-based discussions, shared recommendations and easy-to-read visual reports, and project planning documents with user decision gates.
 ---
 
 # Planwith
@@ -10,7 +10,8 @@ If `PLANWITH_PARTICIPANT=1`, do not orchestrate or invoke this skill; return onl
 Use the user's language. Never impersonate the other provider or claim a failed call participated.
 
 Read [protocol.md](references/protocol.md) and [quality.md](references/quality.md) before starting.
-Run the read-only doctor check, select a planning mode, and declare the topic rubric before debate. Use the bundled `scripts/peer.py`
+Run the read-only doctor check and select a planning mode. Use collaborative thesis/antithesis/
+synthesis; numerical ranking is not the purpose. Use the bundled `scripts/peer.py`
 (relative to this installed skill) for every external participant/judge call. On Windows use
 `py -3`; on macOS/Linux use `python3`. Resolve the script and project root to absolute paths.
 The user should not need to run bridge commands manually.
@@ -84,12 +85,18 @@ Always read [report.md](references/report.md) and produce/update `conclusion-rep
 the CURRENT round directory. Aggregate current and carried-forward initiative topics, including
 pending/unresolved ones, and compare changes against the preceding round without rewriting it.
 Apply the bundled ELI5 and Korean editorial instructions with the user's formal noun-ending
-register. Use the bundled flat HTML template and meaningful diagrams/charts as appropriate.
+register and vocabulary simple enough for a five-year-old. Use the bundled flat HTML template and meaningful diagrams/charts as appropriate.
 Refresh after decisions change, verify against source documents, and open or link the report.
 The HTML is an additional required deliverable; keep the Markdown audit trail.
 
-Put the judge scorecard and recommendation at the top of the topic document, with the full
+Put the synthesis and recommendation at the top of the internal topic document, with the full
 contributions and user answers below. Update affected planning documents to the current
 accepted position, linking back to the topic. Distinguish AI recommendation from user approval.
 Report decisions, remaining questions and next validation steps in the host conversation.
 No commits, pushes, messages to customers, or implementation are implied by planning alone.
+
+The user report tells the short discussion story, resulting direction, proposed steps, AI-owned
+next tasks, unfinished work and a small invitation for user preferences. It must not show internal
+score tables, evidence IDs, hypothesis lists or tied rankings by default. Screen/engineering topics
+include inline examples. Keep the human in charge of direction without making them interpret
+agent bookkeeping or perform the agents' routine checks.
