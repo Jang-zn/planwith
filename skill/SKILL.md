@@ -9,7 +9,8 @@ You are the coordinator in the current conversation. The other official CLI is t
 If `PLANWITH_PARTICIPANT=1`, do not orchestrate or invoke this skill; return only the requested contribution.
 Use the user's language. Never impersonate the other provider or claim a failed call participated.
 
-Read [protocol.md](references/protocol.md) before starting. Use the bundled `scripts/peer.py`
+Read [protocol.md](references/protocol.md) and [quality.md](references/quality.md) before starting.
+Run the read-only doctor check, select a planning mode, and declare the topic rubric before debate. Use the bundled `scripts/peer.py`
 (relative to this installed skill) for every external participant/judge call. On Windows use
 `py -3`; on macOS/Linux use `python3`. Resolve the script and project root to absolute paths.
 The user should not need to run bridge commands manually.
@@ -77,6 +78,8 @@ Use `status` to resume. Never delete state to evade limits or fabricate a user a
 
 ## Deliver
 
+Maintain the evidence ledger, structured topic conclusions and change-impact records described in
+quality.md. Render and verify the structured report; reconcile it against discussion Markdown.
 Always read [report.md](references/report.md) and produce/update `conclusion-report.html` in
 the CURRENT round directory. Aggregate current and carried-forward initiative topics, including
 pending/unresolved ones, and compare changes against the preceding round without rewriting it.

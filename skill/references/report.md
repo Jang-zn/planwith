@@ -30,7 +30,8 @@ Markdown remains the source of record; HTML is a readable derived report, never 
 
 ## Content and layout
 
-Use `assets/conclusion-report.html` as an adaptable starting point, not a mandatory rigid layout.
+Use the validated renderer described in quality.md; it uses `assets/conclusion-report.html` for the
+base visual style. Extend its structured rendering when additional visuals materially help.
 Replace every example/placeholder before delivery. Set title, initiative, update date and scope.
 Lead with the overall conclusion, then a compact map/table of EVERY topic with state, recommendation,
 confidence, user approval status, blockers and links to its section and original discussion.

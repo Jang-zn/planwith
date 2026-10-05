@@ -58,6 +58,23 @@ def run(cmd, prompt, cwd, env, timeout):
     return out
 
 
+def recovery(state):
+    calls = state.get('calls', [])
+    remaining = max(0, LIMIT - len(calls))
+    seconds = max(0, TIME_LIMIT - state.get('elapsed_seconds', 0))
+    if state['status'] == 'waiting_for_user':
+        next_action = 'Wait for the actual user answer, then use answer --file. Do not reset budgets.'
+    elif state['status'] == 'finished':
+        next_action = 'Topic finished. Read the conclusion; do not restart automatically.'
+    elif not remaining or not seconds:
+        next_action = 'Budget exhausted. Save unresolved issues and report; no automatic new round.'
+    elif calls and calls[-1]['status'] in ('started', 'failed'):
+        next_action = 'Last call did not complete. Check CLI login/quota manually. Retry only once within remaining phase budget; otherwise save partial results. Never remove state.json.'
+    else:
+        next_action = 'Continue from last_phase using the saved transcript and current brief.'
+    return {'calls_remaining': remaining, 'seconds_remaining': round(seconds, 1), 'next_action': next_action}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--project', required=True, type=Path)
@@ -65,6 +82,7 @@ def main():
     sub = parser.add_subparsers(dest='action', required=True)
     init = sub.add_parser('init')
     init.add_argument('--title', required=True)
+    init.add_argument('--rubric', choices=['general', 'discovery', 'business', 'design', 'engineering'], default='general')
     call = sub.add_parser('call')
     call.add_argument('--provider', choices=['claude', 'codex'], required=True)
     call.add_argument('--phase', choices=PHASES, required=True)
@@ -90,12 +108,13 @@ def main():
         if args.action == 'init':
             if state_file.exists():
                 raise ValueError('Topic already exists; budgets cannot be reset. Use status or an explicitly authorized new topic/review cycle.')
-            save(state_file, {'version': 1, 'title': args.title, 'status': 'active',
+            save(state_file, {'version': 1, 'title': args.title, 'rubric': args.rubric, 'status': 'active',
                               'calls': [], 'elapsed_seconds': 0, 'last_phase': -1})
             (directory / 'discussion.md').write_text('# ' + args.title + '\n\n## Judge scorecard\nPending.\n\n## Discussion\n', encoding='utf-8')
             return
         state = json.loads(state_file.read_text(encoding='utf-8'))
         if args.action == 'status':
+            state['recovery'] = recovery(state)
             print(json.dumps(state, ensure_ascii=False, indent=2)); return
         log = directory / 'discussion.md'
         if args.action == 'pause':
@@ -174,8 +193,11 @@ def main():
                     f.write(f'\n## {len(state["calls"])} · {args.phase} · {args.provider}\n\n{output}\n')
                 entry['status'] = 'completed'
                 print(output)
-            except BaseException:
+            except BaseException as exc:
                 entry['status'] = 'failed'
+                entry['error_kind'] = type(exc).__name__
+                with log.open('a', encoding='utf-8') as f:
+                    f.write(f'\n## Call interrupted\n{args.provider} / {args.phase}: {type(exc).__name__}. Run status for remaining budget and recovery steps. No automatic retry.\n')
                 raise
             finally:
                 state['elapsed_seconds'] -= max(0, allowance - (time.monotonic() - start))

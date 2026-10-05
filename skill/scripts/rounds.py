@@ -15,7 +15,9 @@ def metadata(folder):
     return modern if modern.exists() else folder / 'round.json'
 
 
-def manage(project, output, action, reason=''):
+def manage(project, output, action, reason='', mode='standard'):
+    if mode not in ('quick', 'standard', 'deep'):
+        raise ValueError('Unknown planning mode.')
     if os.environ.get('PLANWITH_PARTICIPANT') == '1':
         raise ValueError('Participants cannot create planning rounds.')
     project = Path(project).resolve(strict=True)
@@ -37,7 +39,7 @@ def manage(project, output, action, reason=''):
             target = root / f'round-{number:03d}'
             target.mkdir()
             (target / 'records').mkdir()
-            save(target / 'records/round.json', {'number': number, 'status': 'active', 'purpose': reason,
+            save(target / 'records/round.json', {'number': number, 'status': 'active', 'purpose': reason, 'mode': mode,
                                         'previous': current.name if current else None})
             current = target
         elif action == 'close':
@@ -70,8 +72,9 @@ if __name__ == '__main__':
     parser.add_argument('--output', default='docs')
     parser.add_argument('action', choices=['new', 'resume', 'close', 'status'])
     parser.add_argument('--reason', default='')
+    parser.add_argument('--mode', choices=['quick','standard','deep'], default='standard')
     args = parser.parse_args()
     try:
-        print(manage(args.project, args.output, args.action, args.reason))
+        print(manage(args.project, args.output, args.action, args.reason, args.mode))
     except (ValueError, OSError) as exc:
         sys.exit(str(exc))
