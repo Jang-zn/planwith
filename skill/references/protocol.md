@@ -61,3 +61,22 @@ shared proposal. Research uses the host's authorized tools; peer calls receive c
 AI role-play of a customer is not customer evidence. For design, compare actual task flows or
 prototypes when available. For technical and business plans, separate known facts from estimates.
 Do not store secrets or unnecessary personal data in Git-bound discussions.
+
+## Solo developer default and resource questions
+
+Assume the user is a solo developer using AI assistance unless they provide another team setup.
+No separate testers, QA staff, designers or recruitable validation participants are assumed.
+Do not ask how many developers/testers/validators they can supply, or require recruiting people
+before useful planning can proceed. Do not turn an unknown resource count into a blocking question.
+
+If a materially different plan depends on team size and it is unknown, one optional broad question
+is allowed: "혼자 개발하는 기준으로 진행 중임. 함께하는 팀이 있다면 알려주면 반영 가능함."
+Never repeat it across topics or rounds. Without an answer, continue with the explicit solo assumption.
+Volunteered staffing information can support a broader proposal, but it is not a prerequisite.
+
+Prefer a scope one person can build and operate, staged delivery, automation and AI-owned checks.
+When outside user feedback is truly important, explain its specific benefit and propose an optional
+small next step; do not ask for a headcount or present a recruited test group as already available.
+Solo defaults must be included in peer and synthesis-review prompts so peers do not reintroduce
+resource questionnaires. Filter such routine peer questions before presenting feedback to the user.
+No user answer may be invented; the solo assumption remains labeled as an assumption.

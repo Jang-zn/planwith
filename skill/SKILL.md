@@ -36,7 +36,13 @@ The user should not need to run bridge commands manually.
    The bridge requires topics inside `--project`. For an explicitly requested external location,
    explain this limitation and ask for an in-project destination; never silently redirect.
 2. Extract goals, constraints and evidence from the current conversation. Ask only material
-   missing questions. Do not silently assume personal use versus a public commercial product.
+   missing questions. Default to ONE solo developer (the user), supported by the available AI
+   tools, with no dedicated testers, QA, designers or recruited validation group. Record this as
+   an assumption, not a user-confirmed fact. Do not run a staffing/resource questionnaire.
+   Only if team size materially changes the proposed direction AND is not already supplied,
+   optionally ask one broad question (solo or existing team). Do not block progress for its answer;
+   continue with the solo default. Honor volunteered team/resource information and never ask twice.
+   This does not imply personal-only use: commercial versus personal product scope is separate.
 3. Inside the current round's `records/`, create/update `README.md`, `00-brief.md`, `decisions.md`, `open-questions.md`, `sources.md`.
    Create substantive target/problem, product, business/operations, UX/design, technical design,
    and validation/roadmap documents as relevant; label draft, needs-validation or user-approved.

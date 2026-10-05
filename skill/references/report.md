@@ -15,6 +15,10 @@ The reader should immediately understand:
 5. What will AI handle next, and what has not been finished?
 6. What direction, choice, preference or added opinion do we want from the user?
 
+Do not populate feedback with tester counts, QA staffing or recruiting questionnaires. Default to
+solo development; include a broad optional team-size question only when it changes the direction
+and has not already been answered. Prefer AI-owned tasks and a solo-operable scope.
+
 Give the joint recommendation FIRST, explain the short discussion story, and end with an invitation
 for feedback. Do not dump transcripts, jargon, confidence labels, evidence IDs, scores or tied
 alternatives onto the reader. Do not make them solve the agents' analysis. Recommendations must be
