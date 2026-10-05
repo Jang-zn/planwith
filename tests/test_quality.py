@@ -150,6 +150,13 @@ class WorkflowTests(unittest.TestCase):
                         invoke('call','--provider',other,'--phase',phase,'--prompt-file',str(prompt))
                     self.assertEqual(runner.call_count,4)
                     self.assertTrue(all(call.args[0][0]==other for call in runner.call_args_list))
+                    for call in runner.call_args_list:
+                        command=call.args[0]
+                        self.assertNotIn('--ignore-user-config', command)
+                        self.assertNotIn('--setting-sources', command)
+                        self.assertNotIn('--model', command)
+                        self.assertNotIn('-m', command)
+                        self.assertNotIn('--effort', command)
                 invoke('finish','--reason','Fixture completed')
                 state=json.loads((topic/'state.json').read_text(encoding='utf-8'))
                 transcript=(topic/'discussion.md').read_text(encoding='utf-8')

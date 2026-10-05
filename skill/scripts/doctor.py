@@ -30,7 +30,7 @@ def inspect(project):
             check(provider + '_version', version.returncode == 0, version.stdout.strip()[:100])
             args = ['exec', '--help'] if provider == 'codex' else ['--help']
             help_result = subprocess.run([binary] + args, capture_output=True, text=True, encoding='utf-8', timeout=15)
-            required = ['--ignore-user-config', '--ephemeral', '--sandbox'] if provider == 'codex' else ['--strict-mcp-config', '--tools', '--setting-sources', '--no-session-persistence']
+            required = ['--ephemeral', '--sandbox'] if provider == 'codex' else ['--strict-mcp-config', '--tools', '--no-session-persistence']
             missing = [flag for flag in required if flag not in help_result.stdout]
             check(provider + '_options', not missing and help_result.returncode == 0, 'Missing: ' + ', '.join(missing) if missing else 'Required options available')
             auth_args = ['login', 'status'] if provider == 'codex' else ['auth', 'status']

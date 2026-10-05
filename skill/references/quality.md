@@ -7,6 +7,15 @@ participant call on this machine/session. It checks Python, CLI versions/options
 login without model calls. It reports environment variable names only, never values or account IDs.
 If it fails, fix the stated issue or report it; never fall back to an API or bypass auth checks.
 
+## Local model settings
+
+Both participant CLIs load their normal local configuration. Do not override model or reasoning
+flags, suppress user configuration, or assume the host conversation's model is inherited.
+User/project settings follow the official CLI's precedence in the captured project directory.
+The bridge still controls participant tools, sandbox and noninteractive execution, and verifies
+subscription login with no API fallback. Changing model preference belongs in the user's CLI
+settings, not a hard-coded Planwith default.
+
 ## Mode
 
 Record mode with `rounds.py new --mode quick|standard|deep`. Default standard without another
